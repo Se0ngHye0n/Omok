@@ -6,8 +6,18 @@ CELL_SIZE = 30
 BOARD_LENGTH = CELL_SIZE * (BOARD_SIZE - 1)
 
 start_x = -BOARD_LENGTH // 2
-start_y = BOARD_LENGTH // 2
+start_y = BOARD_LENGTH // 2 - 50
 
+
+user_msg = turtle.Turtle()
+user_msg.hideturtle()
+user_msg.penup()
+user_msg.color("black")
+
+ai_message = turtle.Turtle()
+ai_message.hideturtle()
+ai_message.penup()
+ai_message.color("black")
 
 # 오목판 상태 저장 (빈칸은 None)
 board = []
@@ -25,7 +35,7 @@ current_player = "X"  # 흑: X, 백: O
 # 터틀 초기화
 def init_board():
     turtle.title("Omok (Adversarial Search Homework)")
-    turtle.setup(width=650, height=650)
+    turtle.setup(width=650, height=700)
     turtle.speed(0)
     turtle.hideturtle()
     turtle.tracer(False)  # 오목판 한번에 생성
@@ -83,6 +93,26 @@ def draw_labels():
         turtle.goto(x, y - 7.5)
         turtle.write(letter, align="right", font=font)
 
+def write_user_message(msg, color= "black"):
+    user_msg.clear()
+    user_msg.goto(-200, turtle.window_height() // 2 - 60)
+    user_msg.write(msg, align= "center", font= ("Arial", 14, "bold"))
+    turtle.update()
+
+def clear_user_message():
+    user_msg.clear()
+    turtle.update()
+
+def write_ai_message(msg, color= "black"):
+    ai_message.clear()
+    ai_message.goto(200, turtle.window_height() // 2 - 60)
+    ai_message.write(msg, align= "center", font= ("Arial", 14, "bold"))
+    turtle.update()
+
+def clear_ai_message():
+    ai_message.clear()
+    turtle.update()
+
 # 돌 놓기
 def place_stone(row, col, player):
     x = start_x + col * CELL_SIZE
@@ -103,15 +133,3 @@ def place_stone(row, col, player):
         turtle.penup()
 
     board[row][col] = player
-
-# 마우스 클릭
-def handle_click(x, y):
-    global current_player
-    col = round((x - start_x) / CELL_SIZE)
-    row = round((start_y - y) / CELL_SIZE)
-
-    if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE:
-        if board[row][col] is None:
-            place_stone(row, col, current_player)
-            current_player = 'O' if current_player == 'X' else 'X'  # 플레이어 교대
-            turtle.update()  # 화면 갱신
