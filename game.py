@@ -7,23 +7,30 @@ class Game:
     def __init__(self):
         self.BOARD_SIZE = board.BOARD_SIZE
 
-    def player_turn(self, state):  # 누가 둘 차례인지 확인
+    # 누가 둘 차례인지 확인
+    def player_turn(self, state):
         x_count = sum(row.count('X') for row in state)
         o_count = sum(row.count('O') for row in state)
         return 'X' if x_count <= o_count else 'O'
 
-    def opponent_turn(self, player):  # 순서 교대
+    # 순서 교대
+    def opponent_turn(self, player):
         return 'O' if player == 'X' else 'X'
 
-    def valid_loc(self, state):  # 돌이 인접한 위치 반환
+    # 돌이 인접한 위치 반환
+    def valid_loc(self, state):
+        # 놓여진 돌의 개수 count
         x_count = sum(row.count('X') for row in state)
         y_count = sum(row.count('O') for row in state)
         move_count = x_count + y_count
+
+        # 놓여진 돌의 개수가 10개 미만 -> 거리 1만큼만 탐색, 10개 이상 -> 거리 2만큼 탐색
         if move_count < 10:
             distance = 1
         else:
             distance = 2
 
+        # 해당 좌표가 비어있고 distance 내에 다른 돌이 있으면 착수 후보
         loc = []
         for r in range(self.BOARD_SIZE):
             for c in range(self.BOARD_SIZE):
@@ -31,7 +38,8 @@ class Game:
                     loc.append((r, c))
         return loc
 
-    def _has_neighbor(self, state, r, c, distance):  # 주변에 돌이 있는지 확인
+    # 주변에 돌이 있는지 확인
+    def _has_neighbor(self, state, r, c, distance):
         for dr in range(-distance, distance + 1):
             for dc in range(-distance, distance + 1):
                 if dr == 0 and dc == 0:
@@ -42,29 +50,34 @@ class Game:
                         return True
         return False
 
-    def state_update(self, state, action, player):  # 돌을 두고 난 후 state 반환
+    # 돌을 두고 난 후 state 반환
+    def state_update(self, state, action, player):
         r, c = action
         new_state = copy.deepcopy(state)
         new_state[r][c] = player
         return new_state
 
-    def is_terminal(self, state):  # 게임이 끝났는지 확인
+    # 게임이 끝났는지 확인
+    def is_terminal(self, state):
         return self._winner(state) is not None
 
-    def evaluate(self, state, player):  # value 평가
+    # value 평가
+    def evaluate(self, state, player):
         opponent = self.opponent_turn(player)
         player_score = self._pattern(state, player)
         opponent_score = self._pattern(state, opponent)
         return player_score - opponent_score
 
-    def _check(self, state, r, c, dr, dc, player):  # 돌이 한줄로 놓인 개수와 막혀 있는지 여부 확인
+    # 돌이 한줄로 놓인 개수와 막혀 있는지 여부 확인
+    def _check(self, state, r, c, dr, dc, player):
+        # 중복 검사 방지
         prev_r = r - dr
         prev_c = c - dc
-
         if 0 <= prev_r < self.BOARD_SIZE and 0 <= prev_c < self.BOARD_SIZE:
             if state[prev_r][prev_c] == player:
                 return 0, 0
 
+        # 기준 돌 포함
         count = 1
         blocked = 0
 
@@ -80,7 +93,8 @@ class Game:
                 blocked += 1
         return count, blocked
 
-    def _pattern(self, state, player):  # 상황에 따라 가중치 부여
+    # 상황에 따라 가중치 부여
+    def _pattern(self, state, player):
         direction = [(0, 1), (1, 0), (1, 1), (1, -1)]  # 오른쪽, 아래쪽, 우측 하단, 좌측 하단
         score = 0
 
@@ -106,7 +120,8 @@ class Game:
                         score += 100
         return score
 
-    def _winner(self, state):  # 현재 상황에서 승자가 있는지 확인
+    # 현재 상황에서 승자가 있는지 확인
+    def _winner(self, state):
         direction = [(0, 1), (1, 0), (1, 1), (1, -1)]  # 오른쪽, 아래쪽, 우측 하단, 좌측 하단
 
         for r in range(self.BOARD_SIZE):
@@ -115,7 +130,7 @@ class Game:
                     continue
                 player = state[r][c]
                 for dr, dc in direction:
-                    count, _ = self._check(state, r, c, dr, dc, player)
-                    if count == 5:
+                    count, blocked = self._check(state, r, c, dr, dc, player)
+                    if count >= 5:
                         return player
         return None

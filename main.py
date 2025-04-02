@@ -8,43 +8,6 @@ from game import Game
 from ai import iterative_deepening
 
 
-# Tkinter 루트 윈도우 숨기기
-root = tk.Tk()
-root.withdraw()
-
-response = messagebox.askyesno("선, 후공 선택", "선공하시겠습니까?")
-if response:
-    HUMAN_PLAYER = 'X'
-    AI_PLAYER = 'O'
-    user_first = True
-else:
-    HUMAN_PLAYER = 'O'
-    AI_PLAYER = 'X'
-    user_first = False
-
-game = Game()
-
-# 오목판 그리기
-board.init_board()
-board.draw_grid()
-board.draw_flower_points()
-board.draw_labels()
-turtle.update()
-
-# AI 선공일 경우 첫 수 두기
-if not user_first:
-    board.write_ai_message("AI Thinking...")
-    turtle.update()
-    time.sleep(0.5)
-    center = board.BOARD_SIZE // 2
-    board.place_stone(center, center, AI_PLAYER)
-    board.clear_ai_message()
-    board.write_user_message("User Thinking...")
-    turtle.update()
-else:
-    board.write_user_message("User Thinking...")
-    turtle.update()
-
 # 마우스 클릭
 def handle_click(x, y):
     turtle.update()
@@ -83,8 +46,48 @@ def handle_click(x, y):
                     board.write_user_message("User Thinking...")
                     turtle.update()
 
+# 프로그램 종료
 def quit_program():
     sys.exit()
+
+
+# Tkinter 루트 윈도우 숨기기
+root = tk.Tk()
+root.withdraw()
+
+# 선후공 선택 메시지박스 출력
+response = messagebox.askyesno("선, 후공 선택", "선공하시겠습니까?")
+if response:
+    HUMAN_PLAYER = 'X'
+    AI_PLAYER = 'O'
+    user_first = True
+else:
+    HUMAN_PLAYER = 'O'
+    AI_PLAYER = 'X'
+    user_first = False
+
+game = Game()
+
+# 오목판 그리기
+board.init_board()
+board.draw_grid()
+board.draw_flower_points()
+board.draw_labels()
+turtle.update()
+
+# AI 선공일 경우 중앙에 첫 수 두기
+if not user_first:
+    board.write_ai_message("AI Thinking...")
+    turtle.update()
+    time.sleep(0.5)
+    center = board.BOARD_SIZE // 2
+    board.place_stone(center, center, AI_PLAYER)
+    board.clear_ai_message()
+    board.write_user_message("User Thinking...")
+    turtle.update()
+else:
+    board.write_user_message("User Thinking...")
+    turtle.update()
 
 # 클릭 이벤트 바인딩
 turtle.onscreenclick(handle_click)

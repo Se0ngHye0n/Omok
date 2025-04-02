@@ -9,16 +9,6 @@ start_x = -BOARD_LENGTH // 2
 start_y = BOARD_LENGTH // 2 - 50
 
 
-user_msg = turtle.Turtle()
-user_msg.hideturtle()
-user_msg.penup()
-user_msg.color("black")
-
-ai_message = turtle.Turtle()
-ai_message.hideturtle()
-ai_message.penup()
-ai_message.color("black")
-
 # 오목판 상태 저장 (빈칸은 None)
 board = []
 for _ in range(BOARD_SIZE):
@@ -27,10 +17,22 @@ for _ in range(BOARD_SIZE):
         row.append(None)
     board.append(row)
 
+
+# 유저 메시지 터틀 생성
+user_msg = turtle.Turtle()
+user_msg.hideturtle()
+user_msg.penup()
+user_msg.color("black")
+
+# ai 메시지 터틀 생성
+ai_msg = turtle.Turtle()
+ai_msg.hideturtle()
+ai_msg.penup()
+ai_msg.color("black")
+
+
 def get_board():
     return board
-
-current_player = "X"  # 흑: X, 백: O
 
 # 터틀 초기화
 def init_board():
@@ -93,27 +95,31 @@ def draw_labels():
         turtle.goto(x, y - 7.5)
         turtle.write(letter, align="right", font=font)
 
+# 유저 메시지 출력
 def write_user_message(msg, color= "black"):
     user_msg.clear()
     user_msg.goto(-200, turtle.window_height() // 2 - 60)
     user_msg.write(msg, align= "center", font= ("Arial", 14, "bold"))
     turtle.update()
 
+# 유저 메시지 삭제
 def clear_user_message():
     user_msg.clear()
     turtle.update()
 
+# ai 메시지 출력
 def write_ai_message(msg, color= "black"):
-    ai_message.clear()
-    ai_message.goto(200, turtle.window_height() // 2 - 60)
-    ai_message.write(msg, align= "center", font= ("Arial", 14, "bold"))
+    ai_msg.clear()
+    ai_msg.goto(200, turtle.window_height() // 2 - 60)
+    ai_msg.write(msg, align= "center", font= ("Arial", 14, "bold"))
     turtle.update()
 
+# ai 메시지 삭제
 def clear_ai_message():
-    ai_message.clear()
+    ai_msg.clear()
     turtle.update()
 
-# 돌 놓기
+# 착수
 def place_stone(row, col, player):
     x = start_x + col * CELL_SIZE
     y = start_y - row * CELL_SIZE
@@ -123,11 +129,11 @@ def place_stone(row, col, player):
     if player == 'X':
         turtle.dot(20, "black")
     elif player == 'O':
-        turtle.dot(20, "white")  # 흰색 돌 중심
+        turtle.dot(20, "white")
         turtle.pencolor("black")
         turtle.setheading(0)
         turtle.penup()
-        turtle.goto(x, y - 10)  # 외곽선을 정확히 중심에 맞춰서
+        turtle.goto(x, y - 10)
         turtle.pendown()
         turtle.circle(10)
         turtle.penup()
