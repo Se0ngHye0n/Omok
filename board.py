@@ -119,6 +119,14 @@ def clear_ai_message():
     ai_msg.clear()
     turtle.update()
 
+# 게임 종료 메시지 추가
+def write_gameover_message(msg, color= "red"):
+    turtle.penup()
+    turtle.goto(0, turtle.window_height() // 2 - 60)
+    turtle.color(color)
+    turtle.write(msg, align= "center", font= ("Arial", 16, "bold"))
+    turtle.update()
+
 # 착수
 def place_stone(row, col, player):
     x = start_x + col * CELL_SIZE

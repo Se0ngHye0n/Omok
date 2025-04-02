@@ -4,7 +4,7 @@ import time
 MAX_DEPTH = 4
 
 
-def iterative_deepening(game, state, max_time= 10.0):
+def iterative_deepening(game, state, max_time= 2.0):
     start_time = time.time()
     best_move = None
     depth = 1

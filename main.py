@@ -8,8 +8,16 @@ from game import Game
 from ai import iterative_deepening
 
 
+game_over = False
+
+
 # 마우스 클릭
 def handle_click(x, y):
+    # 게임 종료시 더이상 돌을 놓지 않음
+    global game_over
+    if game_over:
+        return
+
     turtle.update()
 
     col = round((x - board.start_x) / board.CELL_SIZE)
@@ -23,7 +31,8 @@ def handle_click(x, y):
 
             if game.is_terminal(state):
                 board.clear_user_message()
-                print("게임 종료 (사용자 승리)")
+                board.write_gameover_message("게임 종료 (유저 승리)")
+                game_over = True
                 return
 
             board.clear_user_message()
@@ -31,7 +40,7 @@ def handle_click(x, y):
             board.write_ai_message("AI Thinking...")
             turtle.update()
 
-            ai_move = iterative_deepening(game, state, max_time= 10.0)
+            ai_move = iterative_deepening(game, state, max_time= 2.0)
             board.clear_ai_message()
 
             if ai_move:
@@ -41,7 +50,8 @@ def handle_click(x, y):
 
                 if game.is_terminal(board.get_board()):
                     board.clear_ai_message()
-                    print("게임 종료 (AI 승리)")
+                    board.write_gameover_message("게임 종료 (AI 승리)")
+                    game_over = True
                 else:
                     board.write_user_message("User Thinking...")
                     turtle.update()
